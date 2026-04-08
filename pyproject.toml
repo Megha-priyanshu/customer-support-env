@@ -2,8 +2,19 @@
 name = "customer-support-env"
 version = "0.1.0"
 description = "Customer Support Environment"
-authors = [{ name="Megha" }]
-dependencies = []
+authors = [{ name = "Megha" }]
+
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "openai",
+    "pydantic",
+    "openenv>=0.2.0"
+]
+
+[project.scripts]
+server = "api.server:app"
 
 [build-system]
 requires = ["setuptools"]
