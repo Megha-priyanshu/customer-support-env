@@ -1,10 +1,1 @@
-name: shopease-env
-entrypoint: api.server:app
-port: 7860
-
-endpoints:
-  - /reset
-  - /step
-  - /state
-  - /tasks
-  - /grader
+entrypoint: python inference.py

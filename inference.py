@@ -5,15 +5,33 @@ from openai import OpenAI
 # ===== ENV =====
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
-
-# OpenAI client (uses OPENAI_API_KEY)
-client = OpenAI()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 ENV_URL = "http://127.0.0.1:8000"
 
 
+def _fallback_action(obs):
+    """Rule-based fallback for environments without an API key."""
+    msg = str(obs.get("message", "")).lower()
+    history = " ".join(str(x).lower() for x in obs.get("history", []))
+    text = f"{msg} {history}"
+
+    if "wrong product" in text or "replacement" in text or "replace" in text:
+        return "replace"
+    if "refund" in text:
+        return "refund"
+    if "order" in text or "tracking" in text or "delivered" in text:
+        return "check_order"
+    if "angry" in str(obs.get("user_type", "")).lower():
+        return "escalate"
+    return "ask_details"
+
+
 # ===== ACTION SELECTION =====
 def choose_action(obs):
+    if not OPENAI_API_KEY:
+        return _fallback_action(obs)
+
     prompt = f"""
 User: {obs['message']}
 User type: {obs['user_type']}
@@ -25,6 +43,7 @@ apologize, ask_details, check_order, refund, replace, escalate
 Respond ONLY with the action name.
 """
 
+    client = OpenAI(api_key=OPENAI_API_KEY, base_url=API_BASE_URL)
     res = client.chat.completions.create(
         model=MODEL_NAME,
         messages=[{"role": "user", "content": prompt}],
