@@ -1,0 +1,10 @@
+[project]
+name = "customer-support-env"
+version = "0.1.0"
+description = "Customer Support Environment"
+authors = [{ name="Megha" }]
+dependencies = []
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
