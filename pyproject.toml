@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-server = "api.server:app"
+server = "server.app:app"
 
 [build-system]
 requires = ["setuptools"]
